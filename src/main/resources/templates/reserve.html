@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Make a reservation!</title>
+</head>
+<body>
+
+<form th:action="@{/reserve}" th:object="${reservationInfo}" method="post">
+    <form>
+    <select name = "customerType">
+        <option value ="regular">Regular</option>
+        <option value ="rewards">Rewards</option>
+    </select>
+        <p>Arrival: <input type="date" name="arrival_date" /></p>
+        <p>Departure: <input type="date" name="departure_date" /></p>
+        <input type="submit" value = "Submit"/>
+    </form>
+</form>
+</body>
+</html>
+
+
+
