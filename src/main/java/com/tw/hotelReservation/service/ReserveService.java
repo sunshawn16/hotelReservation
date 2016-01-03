@@ -17,25 +17,14 @@ public class ReserveService {
     @Autowired
     private HotelPriceRepository hotelPriceRepository;
 
-    private String customerType;
-    private Date date;
-    private double minPayment;
-
     public HotelPrice findBestReservation(CustomerInfo customerInfo) {
-        int days = daysBetween(customerInfo.getArrivalDate(), customerInfo.getDepartureDate());
-        customerType = customerInfo.getCustomerType();
-        List<Double> payments = new ArrayList<>();
-        for (int index = 1; index <= 3; index++) {
-            double paymentForOneHotel = 0;
-            date = customerInfo.getArrivalDate();
-            for (int day = 0; day < days; day++) {
-                double costForOneDay = hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(index, customerType, isWeekDay(date)).getPrice();
-                paymentForOneHotel = paymentForOneHotel + costForOneDay;
-                date = plusOneDay(date);
-            }
-            payments.add(paymentForOneHotel);
-        }
-        minPayment = payments.get(0);
+        List<Double> payments = calculateForEachHotel(customerInfo);
+        int indexForBestHotel = getIndexForBestHotel(payments);
+        return hotelPriceRepository.findByCode(indexForBestHotel + 1);
+    }
+
+    private int getIndexForBestHotel(List<Double> payments) {
+        double minPayment = payments.get(0);
         int indexForBestHotel = 0;
         for (int index = 0; index < 3; index++) {
             if (payments.get(index) < minPayment) {
@@ -43,12 +32,26 @@ public class ReserveService {
                 indexForBestHotel = index;
             }
         }
-        return hotelPriceRepository.findByCode(indexForBestHotel + 1);
+        return indexForBestHotel;
     }
 
-    public double getMinPayment() {
-        return minPayment;
+    private List<Double> calculateForEachHotel(CustomerInfo customerInfo) {
+        int days = daysBetween(customerInfo.getArrivalDate(), customerInfo.getDepartureDate());
+        String customerType = customerInfo.getCustomerType();
+        List<Double> payments = new ArrayList<>();
+        for (int index = 1; index <= 3; index++) {
+            double paymentForOneHotel = 0;
+            Date date = customerInfo.getArrivalDate();
+            for (int day = 0; day < days; day++) {
+                double costForOneDay = hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(index, customerType, isWeekDay(date)).getPrice();
+                paymentForOneHotel = paymentForOneHotel + costForOneDay;
+                date = plusOneDay(date);
+            }
+            payments.add(paymentForOneHotel);
+        }
+        return payments;
     }
+
 
     public boolean isWeekDay(Date date) {
         Calendar cal = Calendar.getInstance();

@@ -8,12 +8,12 @@
 
 <form th:action="@{/reserve}" th:object="${customerInfo}" method="post">
     <form>
-    <select name = "customerType">
+    <select th:field = "*{customerType}" name = "customerType">
         <option value ="regular">Regular</option>
         <option value ="rewards">Rewards</option>
     </select>
-        <p>Arrival: <input type="date" name="arrival_date" /></p>
-        <p>Departure: <input type="date" name="departure_date" /></p>
+        <p>Arrival: <input th:field = "*{arrivalDate}" type="date" name="arrivalDate" /></p>
+        <p>Departure: <input th:field = "*{departureDate}" type="date" name="departureDate" /></p>
         <input type="submit" value = "Submit"/><input type="reset" value="Reset" />
     </form>
 </form>
