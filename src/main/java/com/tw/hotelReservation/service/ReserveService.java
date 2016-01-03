@@ -15,13 +15,16 @@ import java.util.List;
 @Service
 public class ReserveService {
 
+    public static final int NUMBER_OF_HOTEL = 3;
+    public static final int SUNDAY = 1;
+    public static final int SATURDAY = 7;
     @Autowired
     private HotelPriceRepository hotelPriceRepository;
     @Autowired
     private HotelRepository hotelRepository;
 
     public Hotel findBestReservation(CustomerInfo customerInfo) {
-        List<Double> payments = calculateForEachHotel(customerInfo);
+        List<Double> payments = calculatePaymentsForHotels(customerInfo);
         int indexForBestHotel = getIndexForBestHotel(payments);
         return hotelRepository.findByCode(indexForBestHotel + 1);
     }
@@ -29,8 +32,8 @@ public class ReserveService {
     private int getIndexForBestHotel(List<Double> payments) {
         double minPayment = payments.get(0);
         int indexForBestHotel = 0;
-        for (int index = 0; index < 3; index++) {
-            if (payments.get(index) < minPayment) {
+        for (int index = 0; index < NUMBER_OF_HOTEL; index++) {
+            if (payments.get(index) <= minPayment) {
                 minPayment = payments.get(index);
                 indexForBestHotel = index;
             }
@@ -38,22 +41,25 @@ public class ReserveService {
         return indexForBestHotel;
     }
 
-    private List<Double> calculateForEachHotel(CustomerInfo customerInfo) {
+    private List<Double> calculatePaymentsForHotels(CustomerInfo customerInfo) {
         int days = daysBetween(customerInfo.getArrivalDate(), customerInfo.getDepartureDate());
-
-        String customerType = customerInfo.getCustomerType();
         List<Double> payments = new ArrayList<>();
-        for (int index = 1; index <= 3; index++) {
-            double paymentForOneHotel = 0;
-            Date date = customerInfo.getArrivalDate();
-            for (int day = 0; day < days; day++) {
-                double costForOneDay = hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(index, customerType, isWeekDay(date)).getPrice();
-                paymentForOneHotel = paymentForOneHotel + costForOneDay;
-                date = plusOneDay(date);
-            }
-            payments.add(paymentForOneHotel);
+        for (int index = 1; index <= NUMBER_OF_HOTEL; index++) {
+            paymentForOneHotel(customerInfo, days, payments, index);
         }
         return payments;
+    }
+
+    private void paymentForOneHotel(CustomerInfo customerInfo, int days, List<Double> payments, int index) {
+        double paymentForOneHotel = 0;
+        Date date = customerInfo.getArrivalDate();
+        for (int day = 0; day < days; day++) {
+            double costForOneDay = hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(index,
+                    customerInfo.getCustomerType(), isWeekDay(date)).getPrice();
+            paymentForOneHotel = paymentForOneHotel + costForOneDay;
+            date = plusOneDay(date);
+        }
+        payments.add(paymentForOneHotel);
     }
 
 
@@ -61,7 +67,7 @@ public class ReserveService {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         int dayofweek = cal.get(Calendar.DAY_OF_WEEK);
-        return dayofweek != 1 & dayofweek != 7;
+        return dayofweek != SUNDAY & dayofweek != SATURDAY;
     }
 
     public static int daysBetween(Date date1, Date date2) {

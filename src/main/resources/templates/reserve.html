@@ -12,8 +12,8 @@
         <option th:field = "*{customerType}" value ="REGULAR">Regular</option>
         <option value ="REWARDS">Rewards</option>
     </select>
-        <p>Arrival: <input th:field = "*{arrivalDate}" type="text" name="arrivalDate" /></p>
-        <p>Departure: <input th:field = "*{departureDate}" type="text" name="departureDate" /></p>
+        <p>Arrival: <input th:field = "*{arrivalDate}" type="text" name="arrivalDate" placeholder="yyyy/mm/dd"/></p>
+        <p>Departure: <input th:field = "*{departureDate}" type="text" name="departureDate" placeholder="yyyy/mm/dd"/></p>
         <input type="submit" value = "Submit"/><input type="reset" value="Reset" />
     </form>
 </form>

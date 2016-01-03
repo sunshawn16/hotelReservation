@@ -13,6 +13,9 @@ public class Hotel {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "RATING")
+    private int rating;
+
     public int getCode() {
         return code;
     }
@@ -27,5 +30,13 @@ public class Hotel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
