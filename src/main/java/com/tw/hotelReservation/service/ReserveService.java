@@ -1,8 +1,9 @@
 package com.tw.hotelReservation.service;
 
 import com.tw.hotelReservation.model.CustomerInfo;
-import com.tw.hotelReservation.model.HotelPrice;
+import com.tw.hotelReservation.model.Hotel;
 import com.tw.hotelReservation.repository.HotelPriceRepository;
+import com.tw.hotelReservation.repository.HotelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,13 @@ public class ReserveService {
 
     @Autowired
     private HotelPriceRepository hotelPriceRepository;
+    @Autowired
+    private HotelRepository hotelRepository;
 
-    public HotelPrice findBestReservation(CustomerInfo customerInfo) {
+    public Hotel findBestReservation(CustomerInfo customerInfo) {
         List<Double> payments = calculateForEachHotel(customerInfo);
         int indexForBestHotel = getIndexForBestHotel(payments);
-        return hotelPriceRepository.findByCode(indexForBestHotel + 1);
+        return hotelRepository.findByCode(indexForBestHotel + 1);
     }
 
     private int getIndexForBestHotel(List<Double> payments) {
@@ -37,6 +40,7 @@ public class ReserveService {
 
     private List<Double> calculateForEachHotel(CustomerInfo customerInfo) {
         int days = daysBetween(customerInfo.getArrivalDate(), customerInfo.getDepartureDate());
+
         String customerType = customerInfo.getCustomerType();
         List<Double> payments = new ArrayList<>();
         for (int index = 1; index <= 3; index++) {
