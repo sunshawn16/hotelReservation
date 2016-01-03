@@ -5,7 +5,9 @@
     <title>Reservation success!</title>
 </head>
 <body>
+<h1>Thank you for your Reservation!</h1>
 
-<div>Thank you for reservation, ${hotelResult.name}is the best choice</div>
+<p th:text="'The Best choice is ' + ${hotelResult.name}"/>
+<a href="/reserve">Make another reservation</a>
 </body>
 </html>

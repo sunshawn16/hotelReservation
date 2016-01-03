@@ -30,6 +30,7 @@ public class ReserveServiceTest {
     @Before
     public void setUp() throws Exception {
         reserveService = new ReserveService();
+
         EasyMockSupport easyMockSupport = new EasyMockSupport();
         hotelPriceRepository = easyMockSupport.createMock(HotelPriceRepository.class);
         setField(reserveService, "hotelPriceRepository", hotelPriceRepository);
@@ -45,13 +46,16 @@ public class ReserveServiceTest {
         expect(hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(1, "REGULAR", true)).andReturn(generateHotelPrice(1, "REGULAR", true, 110)).anyTimes();
         expect(hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(2, "REGULAR", true)).andReturn(generateHotelPrice(2, "REGULAR", true, 160)).anyTimes();
         expect(hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(3, "REGULAR", true)).andReturn(generateHotelPrice(3, "REGULAR", true, 220)).anyTimes();
+        expect(hotelPriceRepository.findByCode(1)).andReturn(generateHotelPrice(1, "REGULAR", true, 110)).times(1);
 
         replay(hotelPriceRepository);
-        reserveService.findBestReservation(customer);
+        HotelPrice hotelPrice = reserveService.findBestReservation(customer);
         verify(hotelPriceRepository);
 
-        System.out.println(reserveService.getMinPayment());
+        assertThat(hotelPrice.getCode(), is(1));
+
     }
+
     @Test
     public void findTheBestHotelForRegularCustomerFromDec26ToDec29() throws Exception {
         CustomerInfo customer = new CustomerInfo();
@@ -64,12 +68,14 @@ public class ReserveServiceTest {
         expect(hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(1, "REGULAR", false)).andReturn(generateHotelPrice(1, "REGULAR", false, 90)).anyTimes();
         expect(hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(2, "REGULAR", false)).andReturn(generateHotelPrice(2, "REGULAR", false, 60)).anyTimes();
         expect(hotelPriceRepository.findByCodeAndCustomerTypeAndDayType(3, "REGULAR", false)).andReturn(generateHotelPrice(3, "REGULAR", false, 150)).anyTimes();
+        expect(hotelPriceRepository.findByCode(2)).andReturn(generateHotelPrice(2, "REGULAR", true, 160)).times(1);
 
         replay(hotelPriceRepository);
-        reserveService.findBestReservation(customer);
+        HotelPrice hotelPrice = reserveService.findBestReservation(customer);
         verify(hotelPriceRepository);
 
-        System.out.println(reserveService.getMinPayment());
+        assertThat(hotelPrice.getCode(), is(2));
+
     }
 
     private HotelPrice generateHotelPrice(int code, String customerType, boolean dayType, double price) {

@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<form th:action="@{/reserve}" th:object="${reservationInfo}" method="post">
+<form th:action="@{/reserve}" th:object="${customerInfo}" method="post">
     <form>
     <select name = "customerType">
         <option value ="regular">Regular</option>
@@ -14,7 +14,7 @@
     </select>
         <p>Arrival: <input type="date" name="arrival_date" /></p>
         <p>Departure: <input type="date" name="departure_date" /></p>
-        <input type="submit" value = "Submit"/>
+        <input type="submit" value = "Submit"/><input type="reset" value="Reset" />
     </form>
 </form>
 </body>
