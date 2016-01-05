@@ -1,22 +1,21 @@
 package com.tw.hotelReservation.controller;
 
-import com.tw.hotelReservation.model.CustomerInfo;
 import com.tw.hotelReservation.model.Hotel;
-import com.tw.hotelReservation.repository.HotelRepository;
+import com.tw.hotelReservation.model.ReservationInfo;
 import com.tw.hotelReservation.service.ReserveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class UIController {
     @Autowired
     private ReserveService reserveService;
-    @Autowired
-    private HotelRepository hotelRepository;
 
     @RequestMapping(value = "/welcome")
     public String home() {
@@ -28,15 +27,15 @@ public class UIController {
         return "login";
     }
 
-    @RequestMapping(value = "/reserve", method = RequestMethod.GET)
+    @RequestMapping(value = "/reserve", method = GET)
     public String reserve(Model model) {
-        model.addAttribute("customerInfo", new CustomerInfo());
+        model.addAttribute("reservationInfo", new ReservationInfo());
         return "reserve";
     }
 
-    @RequestMapping(value = "/reserve", method = RequestMethod.POST)
-    public String submitReservation(@ModelAttribute CustomerInfo customerInfo, Model model) {
-        Hotel hotel = reserveService.findBestReservation(customerInfo);
+    @RequestMapping(value = "/reserve", method = POST)
+    public String submitReservation(@ModelAttribute ReservationInfo reservationInfo, Model model) {
+        Hotel hotel = reserveService.findBestReservation(reservationInfo);
         model.addAttribute("hotelResult", hotel);
         return "result";
 

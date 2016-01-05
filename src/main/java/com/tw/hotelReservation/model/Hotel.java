@@ -5,12 +5,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "HOTEL")
 public class Hotel {
-
+    @Id
     @Column(name = "CODE")
     private int code;
 
-    @Id
-    @Column(name = "NAME")
+    @Column(name = "NAME" )
     private String name;
 
     @Column(name = "RATING")

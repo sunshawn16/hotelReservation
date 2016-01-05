@@ -32,6 +32,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile 'org.hsqldb:hsqldb'
+    compile 'joda-time:joda-time:2.9.1'
     testCompile 'junit:junit:4.11'
     testCompile 'org.easymock:easymock:3.3'
     testCompile 'org.springframework.boot:spring-boot-starter-test'

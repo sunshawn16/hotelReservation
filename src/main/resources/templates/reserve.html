@@ -6,11 +6,11 @@
 </head>
 <body>
 
-<form th:action="@{/reserve}" th:object="${customerInfo}" method="post">
+<form th:action="@{/reserve}" th:object="${reservationInfo}" method="post">
     <form>
     <select name = "customerType">
         <option th:field = "*{customerType}" value ="REGULAR">Regular</option>
-        <option value ="REWARDS">Rewards</option>
+        <option th:field = "*{customerType}" value ="REWARDS">Rewards</option>
     </select>
         <p>Arrival: <input th:field = "*{arrivalDate}" type="text" name="arrivalDate" placeholder="yyyy/mm/dd"/></p>
         <p>Departure: <input th:field = "*{departureDate}" type="text" name="departureDate" placeholder="yyyy/mm/dd"/></p>
