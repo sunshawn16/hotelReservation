@@ -9,8 +9,8 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.tw.hotelReservation.model.DayType.WEEKDAY;
 import static com.tw.hotelReservation.model.DayType.WEEKEND;
@@ -28,33 +28,33 @@ public class ReserveService {
 
     public Hotel findBestReservation(ReservationInfo reservationInfo) {
         int numberOfHotel = (int) hotelRepository.count();
-        List<Double> payments = calculatePaymentsForHotels(reservationInfo, numberOfHotel);
+        Map<Integer, Double> payments = calculatePaymentsForHotels(reservationInfo, numberOfHotel);
         int indexForBestHotel = getIndexForBestHotel(payments, numberOfHotel);
-        return hotelRepository.findByCode(indexForBestHotel + 1);
+        return hotelRepository.findByCode(indexForBestHotel);
     }
 
-    private int getIndexForBestHotel(List<Double> payments, int numOfHotel) {
-        double minPayment = payments.get(0);
-        int indexForBestHotel = 0;
-        for (int index = 0; index < numOfHotel; index++) {
-            if (payments.get(index) <= minPayment) {
-                minPayment = payments.get(index);
-                indexForBestHotel = index;
+    private int getIndexForBestHotel(Map<Integer, Double> payments, int numOfHotel) {
+        double minPayment = payments.get(1);
+        int codeForBestHotel = 1;
+        for (int codeOfHotel = 1; codeOfHotel <= numOfHotel; codeOfHotel++) {
+            if (payments.get(codeOfHotel) <= minPayment) {
+                minPayment = payments.get(codeOfHotel);
+                codeForBestHotel = codeOfHotel;
             }
         }
-        return indexForBestHotel;
+        return codeForBestHotel;
     }
 
-    private List<Double> calculatePaymentsForHotels(ReservationInfo reservationInfo, int numberOfHotel) {
+    private Map<Integer, Double> calculatePaymentsForHotels(ReservationInfo reservationInfo, int numberOfHotel) {
         int days = daysBetween(reservationInfo.getArrivalDate(), reservationInfo.getDepartureDate()).getDays();
-        List<Double> payments = new ArrayList<>();
-        for (int index = 1; index <= numberOfHotel; index++) {
-            paymentForOneHotel(reservationInfo, days, payments, index);
+        Map<Integer, Double> payments = new HashMap<>();
+        for (int codeOfHotel = 1; codeOfHotel <= numberOfHotel; codeOfHotel++) {
+            payments.put(codeOfHotel, paymentForOneHotel(reservationInfo, days, codeOfHotel));
         }
         return payments;
     }
 
-    private void paymentForOneHotel(ReservationInfo reservationInfo, int days,List<Double> payments, int index) {
+    private double paymentForOneHotel(ReservationInfo reservationInfo, int days, int index) {
         double paymentForOneHotel = 0.0;
         LocalDate date = reservationInfo.getArrivalDate();
         for (int day = 0; day < days; day++) {
@@ -64,7 +64,7 @@ public class ReserveService {
             date = date.plusDays(1);
 
         }
-        payments.add(paymentForOneHotel);
+        return paymentForOneHotel;
     }
 
 
